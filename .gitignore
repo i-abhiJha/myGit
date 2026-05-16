@@ -1,0 +1,11 @@
+# Build artifacts
+*.o
+mygit
+
+# Runtime / repo state created by running mygit
+.mygit/
+log.txt
+
+# OS / editor
+.DS_Store
+*.swp

@@ -1,10 +1,23 @@
 # Compiler
 CXX = g++
 
+# Locate OpenSSL / zlib. On macOS (Homebrew) these are not on the default
+# search path, so query `brew --prefix`. On Linux these stay empty and the
+# system headers/libs are found by default.
+OPENSSL_PREFIX := $(shell brew --prefix openssl@3 2>/dev/null)
+ZLIB_PREFIX    := $(shell brew --prefix zlib 2>/dev/null)
+
+INCS := $(if $(OPENSSL_PREFIX),-I$(OPENSSL_PREFIX)/include) \
+        $(if $(ZLIB_PREFIX),-I$(ZLIB_PREFIX)/include) \
+        -I/usr/local/include
+LIBDIRS := $(if $(OPENSSL_PREFIX),-L$(OPENSSL_PREFIX)/lib) \
+           $(if $(ZLIB_PREFIX),-L$(ZLIB_PREFIX)/lib) \
+           -L/usr/local/lib
+
 # Compiler flags
-CXXFLAGS = -std=c++20 -Wall -Wextra -pedantic  -I/usr/local/include
-# OpenSSL libraries
-LIBS = -lssl -lcrypto -L/usr/local/lib -lz
+CXXFLAGS = -std=c++20 -Wall -Wextra -pedantic $(INCS)
+# OpenSSL + zlib libraries
+LIBS = $(LIBDIRS) -lssl -lcrypto -lz
 
 # Executable name
 TARGET = ./mygit
